@@ -4,9 +4,9 @@
 
 module vga (
     input wire MainClkSrc,
-    output wire[5:0] OutColor,
-    output reg OutHsync,
-    output reg OutVsync
+    output wire[5:0] ColorOut,
+    output reg HsyncOut,
+    output reg VsyncOut
 );
 
 wire PixelClkIbufg;
@@ -60,8 +60,8 @@ BUFG PixelClkBufgInst (
     .O(PixelClkSrc)
 );
 
-initial OutHsync <= 1'b1;
-initial OutVsync <= 1'b1;
+initial HsyncOut <= 1'b1;
+initial VsyncOut <= 1'b1;
 
 reg Blank = 0;
 wire[9:0] PixelCounter;
@@ -89,20 +89,18 @@ vbuffer #(
     PixelCounter[1:0],
     2'b0,
     6'b0, 
-    OutColor
+    ColorOut
 );
 
 always @(posedge PixelClkSrc) begin
-    if (PixelCounter == 657) OutHsync <= 0;
-    if (PixelCounter == 753) OutHsync <= 1;
+    if (PixelCounter == 657) HsyncOut <= 0;
+    if (PixelCounter == 753) HsyncOut <= 1;
 
-    if (LineCounter == 491) OutVsync <= 0;
-    if (LineCounter == 493) OutVsync <= 1;
+    if (LineCounter == 491) VsyncOut <= 0;
+    if (LineCounter == 493) VsyncOut <= 1;
 
     if (PixelCounter == 640) Blank <= 1;
     if (PixelCounter == 799 && LineCounter < 480) Blank <= 0;
-    // if (PixelCounter < 640 && LineCounter < 480) OutColor <= 6'b000011;
-    // else OutColor <= 6'b0;
 end
 
 endmodule

@@ -6,14 +6,14 @@ NET "PixelClkSrc" TNM_NET = PixelClkSrc;
 TIMESPEC TS_PixelClkSrc = PERIOD "PixelClkSrc" TS_MainClkSrc / 4 HIGH 50%;
 
 # P1
-NET "OutColor[0]"                   LOC = P35      | IOSTANDARD = LVCMOS33 |DRIVE = 8 |SLEW = FAST ;    # IO_L1P_3           	        Sch = GPIO-P18 
-NET "OutColor[1]"                   LOC = P33      | IOSTANDARD = LVCMOS33 |DRIVE = 8 |SLEW = FAST ;    # IO_L2P_3	   		            Sch = GPIO-P17 
-NET "OutColor[2]"                   LOC = P30      | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST ;    # IO_L36P_3          	        Sch = GPIO-P16 
-NET "OutColor[3]"                   LOC = P27      | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST ;    # IO_L37P_3	   		            Sch = GPIO-P15 
-NET "OutColor[4]"                   LOC = P24      | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST ;    # IO_L41P_GCLK27_3   	        Sch = GPIO-P14 
-NET "OutColor[5]"                   LOC = P22      | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST ;    # IO_L42P_GCLK25_TRDY2_3        Sch = GPIO-P13 
-NET "OutHsync"                      LOC = P17      | IOSTANDARD = LVCMOS33 |DRIVE = 8 |SLEW = FAST ;    # IO_L43P_GCLK23_3   	        Sch = GPIO-P12 
-NET "OutVsync"                      LOC = P15      | IOSTANDARD = LVCMOS33 |DRIVE = 8 |SLEW = FAST ;    # IO_L44P_GCLK21_3   	        Sch = GPIO-P11	        Sch = GPIO-P11
+NET "ColorOut[0]"                   LOC = P35      | IOSTANDARD = LVCMOS33 |DRIVE = 8 |SLEW = FAST ;    # IO_L1P_3           	        Sch = GPIO-P18 
+NET "ColorOut[1]"                   LOC = P33      | IOSTANDARD = LVCMOS33 |DRIVE = 8 |SLEW = FAST ;    # IO_L2P_3	   		            Sch = GPIO-P17 
+NET "ColorOut[2]"                   LOC = P30      | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST ;    # IO_L36P_3          	        Sch = GPIO-P16 
+NET "ColorOut[3]"                   LOC = P27      | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST ;    # IO_L37P_3	   		            Sch = GPIO-P15 
+NET "ColorOut[4]"                   LOC = P24      | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST ;    # IO_L41P_GCLK27_3   	        Sch = GPIO-P14 
+NET "ColorOut[5]"                   LOC = P22      | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST ;    # IO_L42P_GCLK25_TRDY2_3        Sch = GPIO-P13 
+NET "HsyncOut"                      LOC = P17      | IOSTANDARD = LVCMOS33 |DRIVE = 8 |SLEW = FAST ;    # IO_L43P_GCLK23_3   	        Sch = GPIO-P12 
+NET "VsyncOut"                      LOC = P15      | IOSTANDARD = LVCMOS33 |DRIVE = 8 |SLEW = FAST ;    # IO_L44P_GCLK21_3   	        Sch = GPIO-P11	        Sch = GPIO-P11
 #NET "IO_P1[18]"                  LOC = P14      | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST ;    # IO_L44N_GCLK20_3   		    Sch = GPIO-N11
 #NET "IO_P1[19]"                  LOC = P12      | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST ;    # IO_L49P_3          	        Sch = GPIO-P10
 #NET "IO_P1[20]"                  LOC = P11      | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST ;    # IO_L49N_3          		    Sch = GPIO-N10 

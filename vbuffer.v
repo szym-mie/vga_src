@@ -16,19 +16,17 @@ module vbuffer #(
 );
 
 reg[BPP-1:0] Buffer[PSIZE-1:0];
-// reg[AWIDTH-1:0] ReadAddress;
-// reg[AWIDTH-1:0] WriteAddress;
-
-// initial ReadAddress <= 1'b0;
-// initial WriteAddress <= 1'b0;
 
 // FIXME: TEST
-initial Buffer[0] <= 6'b000000;
-initial Buffer[1] <= 6'b000001;
-initial Buffer[2] <= 6'b000010;
-initial Buffer[3] <= 6'b000011;
+//initial begin
+//	$readmemb("test1.mem", Buffer);
+//end
 
 always @(posedge Clk) begin
+    Buffer[0] <= 6'b000000;
+	 Buffer[1] <= 6'b000011;
+	 Buffer[2] <= 6'b001100;
+	 Buffer[3] <= 6'b110000;
     if (Write) begin
         Buffer[WriteAddress] <= DataIn;
     end
