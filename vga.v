@@ -1,12 +1,20 @@
 `timescale 1ns/1ps
 `include "vcounter.v"
 `include "vbuffer.v"
+`include "vmmu.v"
 
 module vga (
     input wire MainClkSrc,
+    input wire[18:0] MemAddr,
+    inout wire[7:0] MemData,
+    output wire MemWE,
+    output wire MemOE,
     output wire[5:0] ColorOut,
     output reg HsyncOut,
-    output reg VsyncOut
+    output reg VsyncOut,
+    input wire Sclk,
+    input wire Mosi,
+    input wire Csel
 );
 
 wire PixelClkIbufg;
@@ -14,19 +22,31 @@ wire PixelClkBufg;
 wire PixelClkDcmOut;
 wire PixelClkSrc;
 
-wire DcmRst;
-wire[7:0] DcmStatus;
-wire DcmLocked;
-wire DcmClkFxStopped = DcmStatus[2];
+wire PixelDcmRst;
+wire[7:0] PixelDcmStatus;
+wire PixelDcmLocked;
+wire PixelDcmClkFxStopped = PixelDcmStatus[2];
 
-assign DcmRst = DcmClkFxStopped & ~DcmLocked;
+assign PixelDcmRst = PixelDcmClkFxStopped & ~PixelDcmLocked;
 
-IBUFG PixelClkIbufgInst(
+wire MemClkIbufg;
+wire MemClkBufg;
+wire MemClkDcmOut;
+wire MemClkSrc;
+
+wire MemDcmRst;
+wire[7:0] MemDcmStatus;
+wire MemDcmLocked;
+wire MemDcmClkFxStopped = MemDcmStatus[2];
+
+assign MemDcmRst = MemDcmClkFxStopped & ~MemDcmLocked;
+
+IBUFG MainClkIbufgInst(
     .I(MainClkSrc),
     .O(MainClkIbufg)
 );
 
-// using synthesized clock@25MHz
+// pixel clock using synthesized clock@25MHz
 DCM_SP #(
     .CLKIN_PERIOD(10), // 10ns
     .CLK_FEEDBACK("NONE"),
@@ -36,7 +56,7 @@ DCM_SP #(
 ) PixelClkDcmInst (
     .CLKIN(MainClkIbufg),
     .CLKFB(1'b0),
-    .RST(DcmRst),
+    .RST(PixelDcmRst),
     .PSEN(1'b0),
     .PSINCDEC(1'b0),
     .PSCLK(1'b0),
@@ -49,8 +69,8 @@ DCM_SP #(
     .CLKDV(),
     .CLKFX(PixelClkDcmOut),
     .CLKFX180(),
-    .STATUS(DcmStatus),
-    .LOCKED(DcmLocked),
+    .STATUS(PixelDcmStatus),
+    .LOCKED(PixelDcmLocked),
     .PSDONE(),
     .DSSEN(1'b0)
 );
@@ -58,6 +78,40 @@ DCM_SP #(
 BUFG PixelClkBufgInst (
     .I(PixelClkDcmOut),
     .O(PixelClkSrc)
+);
+
+// memory clock using synthesized clock@50MHz
+DCM_SP #(
+    .CLKIN_PERIOD(10), // 10ns
+    .CLK_FEEDBACK("NONE"),
+    .CLKDV_DIVIDE(2.0), // not used
+    .CLKFX_MULTIPLY(2),
+    .CLKFX_DIVIDE(4)
+) MemClkDcmInst (
+    .CLKIN(MainClkIbufg),
+    .CLKFB(1'b0),
+    .RST(MemDcmRst),
+    .PSEN(1'b0),
+    .PSINCDEC(1'b0),
+    .PSCLK(1'b0),
+    .CLK0(),
+    .CLK90(),
+    .CLK180(),
+    .CLK270(),
+    .CLK2X(),
+    .CLK2X180(),
+    .CLKDV(),
+    .CLKFX(MemClkDcmOut),
+    .CLKFX180(),
+    .STATUS(MemDcmStatus),
+    .LOCKED(MemDcmLocked),
+    .PSDONE(),
+    .DSSEN(1'b0)
+);
+
+BUFG MemClkBufgInst (
+    .I(MemClkDcmOut),
+    .O(MemClkSrc)
 );
 
 initial HsyncOut <= 1'b1;
@@ -78,8 +132,36 @@ vcounter #(
     LineCounter
 );
 
+
+reg[18:0] ReqAddr1 = 19'b000_0000_0000_0000_0000;
+reg[18:0] ReqAddr2 = 19'b000_0000_0000_0000_0001;
+reg[18:0] ReqAddr3 = 19'b000_0000_0000_0000_0010;
+reg[18:0] ReqAddr4 = 19'b000_0000_0000_0000_0011;
+
+wire[7:0] ReqRead = 1'b0;
+reg[7:0] ReqWrite = 6'b00_00_11;
+
+vmmu #(
+    .AWIDTH(19),
+    .DWIDTH(8),
+    .TSSIZE(8)
+) VMMU (
+    .MemClk(MemClkSrc),
+    .ReqAddrSrc1(ReqAddr1),
+    .ReqAddrSrc2(ReqAddr2),
+    .ReqAddrSrc3(ReqAddr3),
+    .ReqAddrSrc4(ReqAddr4),
+    .ReqReadData1(ReqRead),
+    .ReqReadData2(ReqRead),
+    .ReqWriteData(ReqWrite),
+    .MemAddrPort(MemAddr),
+    .MemDataPort(MemData),
+    .MemWriteEnable(MemWE),
+    .MemOutputEnable(MemOE)
+);
+
 vbuffer #(
-    .AWIDTH(2), 
+    .IWIDTH(2), 
     .BPP(6),
     .PSIZE(4)
 ) VideoBuffer (

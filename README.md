@@ -45,18 +45,9 @@ access max time: 10, 12ns
 full read/write max time: <20ns 
 ```
 
-## Modules
+## Video memory
 
-- spi.v - 8-bit SPI receiver with rudimentary transfer status
-- vbuffer.v - video output buffer unit, reads pixels through VMMU to hold buffer
-- vcmd.v - video command processor, interacts with received data from SPI
-- vcounter.v - video output counter unit, controls blanking and analog output
-- vmmu.v - video memory managment unit, time-slots reads and writes, controls memory chip
-- vga.v - top-level module
-
-## SPI commands
-
-### Video memory layout - pixel blocks and block pointers
+### Layout - pixel blocks and block pointers
 
 Framebuffer video RAM pixels are stored in RGB222 (6bpp) pixel format so that every 4 pixels can be stored in 3 bytes
 of memory. Thus a memory controller requires 4 pixels to be written at once, to eliminate costly reads from memory,
@@ -73,6 +64,28 @@ it tells which block from the start of the row is selected. Getting starting dis
   1 -+----+----+----+-/
      ~~~~~~~~~~~~~~~~~
 ```
+
+### Time frames and slots
+
+Because of the underlying pixel format 3 reads are required for each 4 bytes displyed. With each pixel being displayed every 40ns, a single time frame has duration of 160ns.
+
+A proper settling time for every read/write with 10ns memory is closer to 20ns due to AC characteristics of both memory chip and the internal FPGA port drivers as well as the connection between both. The 10ns timing indicates minimal time to start the actual input/output phase just after obtaining valid address.
+
+This leaves the MMU with 8 time slots in each frame, 3 of which being the mandatory pixel block fetch. Other 5 of those slots
+can be freely used, currently for writing to the other buffer. This would make it possible for each frame to be completely different, giving a possibility of true 60Hz video being presented. 
+
+Nevertheless due to practical reasons, a limiting factor might be the SPI interface, along with the most likely lower frequency of the microcontroller driving the display controller.
+
+## Modules
+
+- spi.v - 8-bit SPI receiver with rudimentary transfer status
+- vbuffer.v - video output buffer unit, reads pixels through VMMU to hold buffer
+- vcmd.v - video command processor, interacts with received data from SPI
+- vcounter.v - video output counter unit, controls blanking and analog output
+- vmmu.v - video memory managment unit, time-slots reads and writes, controls memory chip
+- vga.v - top-level module
+
+## SPI commands
 
 ### Packed and unpacked pixel data
 

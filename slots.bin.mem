@@ -1,0 +1,44 @@
+// Slots file line structure:
+//
+// |=======|=======|=======|=======|=======|=======|=======|=======|=======|
+// | bit   |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
+// | field |  NOP  |   -   |   -   |   -   |     SADDR     | TDATA |  R/W  |
+// |=======|=======|=======|=======|=======|===============|=======|=======|
+// 
+// fields:
+// - NOP: no-operation; don't do anything if bit set
+// - SADDR: specify address source 1-4
+//
+//     source 1:               00
+//     source 2:               01
+//     source 3:               10
+//     source 4:               11
+// 
+// - TDATA, R/W: specify data ouptut (read) 1-2 or data input (write) 1
+//               and if operation is read or write
+//
+//     --- TDATA ---
+//     target 1:               0X
+//     target 2:               1X
+//
+//     ---  R/W  --- 
+//     read:                   X0
+//     write:                  X1
+//
+//     ---  ALL  ---
+//     read to destination 1:  00
+//     read to destination 2:  10
+//     not used:               01
+//     write from source 1:    11
+//     
+
+// test pattern 1
+00000000 // read byte 1
+00000100 // read byte 2
+00001000 // read byte 3
+00001100 // read byte 4
+00000001 // write byte 1
+00000101 // write byte 2
+00001001 // write byte 3
+00001101 // write byte 4
+
