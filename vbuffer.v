@@ -11,18 +11,15 @@ module vbuffer #(
     input wire Blank,
     input wire[IWIDTH-1:0] ReadIndex,
     input wire[IWIDTH-1:0] WriteIndex,
-    input wire[BPP-1:0] DataIn,
+    input wire[7:0] DataIn,
     output reg[BPP-1:0] VideoOut
 );
 
 reg[BPP-1:0] Buffer[PSIZE-1:0];
 
 always @(posedge Clk) begin
-    Buffer[0] <= 6'b000000;
-    Buffer[1] <= 6'b000011;
-    Buffer[2] <= 6'b001100;
-    Buffer[3] <= 6'b110000;
     if (Write) begin
+
         Buffer[WriteIndex] <= DataIn;
     end
     if (Blank) VideoOut <= 1'b0;

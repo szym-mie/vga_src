@@ -76,6 +76,8 @@ can be freely used, currently for writing to the other buffer. This would make i
 
 Nevertheless due to practical reasons, a limiting factor might be the SPI interface, along with the most likely lower frequency of the microcontroller driving the display controller.
 
+SPI data, due to lower data throuput (clock is assumed max. 100MHz) can be written in one time frame.
+
 ## Modules
 
 - spi.v - 8-bit SPI receiver with rudimentary transfer status
@@ -84,6 +86,14 @@ Nevertheless due to practical reasons, a limiting factor might be the SPI interf
 - vcounter.v - video output counter unit, controls blanking and analog output
 - vmmu.v - video memory managment unit, time-slots reads and writes, controls memory chip
 - vga.v - top-level module
+
+## User Constrained Files
+
+- vga.demoboard.ucf - for quick demo on a breadboard, no memory installed
+- vga.schematic.ucf - pin numbering according to the planned schematic
+- vga.ucf - same as above, except for on change of one data pin location - 
+   a wire had to be placed and a connection rerouted due to confusing Mimas 
+   pin header schematics
 
 ## SPI commands
 

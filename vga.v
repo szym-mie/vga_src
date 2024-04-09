@@ -5,7 +5,7 @@
 
 module vga (
     input wire MainClkSrc,
-    input wire[18:0] MemAddr,
+    output wire[18:0] MemAddr,
     inout wire[7:0] MemData,
     output wire MemWE,
     output wire MemOE,
@@ -80,13 +80,13 @@ BUFG PixelClkBufgInst (
     .O(PixelClkSrc)
 );
 
-// memory clock using synthesized clock@50MHz
+// memory clock using synthesized clock@100MHz
 DCM_SP #(
     .CLKIN_PERIOD(10), // 10ns
     .CLK_FEEDBACK("NONE"),
     .CLKDV_DIVIDE(2.0), // not used
     .CLKFX_MULTIPLY(2),
-    .CLKFX_DIVIDE(4)
+    .CLKFX_DIVIDE(2) // 4 for 50MHz
 ) MemClkDcmInst (
     .CLKIN(MainClkIbufg),
     .CLKFB(1'b0),
@@ -136,10 +136,16 @@ vcounter #(
 reg[18:0] ReqAddr1 = 19'b000_0000_0000_0000_0000;
 reg[18:0] ReqAddr2 = 19'b000_0000_0000_0000_0001;
 reg[18:0] ReqAddr3 = 19'b000_0000_0000_0000_0010;
-reg[18:0] ReqAddr4 = 19'b000_0000_0000_0000_0011;
+reg[18:0] ReqAddr4 = 19'b000_0000_0000_0000_0000;
 
-wire[7:0] ReqRead = 1'b0;
-reg[7:0] ReqWrite = 6'b00_00_11;
+wire[7:0] ReqRead1;
+wire[7:0] ReqRead2;
+wire ReadRdy1;
+wire ReadRdy2;
+
+reg[7:0] ReqWrite = 8'b00_00_11_00;
+
+reg[1:0] WriteBufferIndex = 1'b0; 
 
 vmmu #(
     .AWIDTH(19),
@@ -151,8 +157,10 @@ vmmu #(
     .ReqAddrSrc2(ReqAddr2),
     .ReqAddrSrc3(ReqAddr3),
     .ReqAddrSrc4(ReqAddr4),
-    .ReqReadData1(ReqRead),
-    .ReqReadData2(ReqRead),
+    .ReqReadData1(ReqRead1),
+    .ReadDataRdy1(ReadRdy1),
+    .ReqReadData2(ReqRead2),
+    .ReadDataRdy2(ReadRdy2),
     .ReqWriteData(ReqWrite),
     .MemAddrPort(MemAddr),
     .MemDataPort(MemData),
@@ -165,13 +173,13 @@ vbuffer #(
     .BPP(6),
     .PSIZE(4)
 ) VideoBuffer (
-    PixelClkSrc, 
-    1'b0, 
-    Blank, 
-    PixelCounter[1:0],
-    2'b0,
-    6'b0, 
-    ColorOut
+    .PixelClk(PixelClkSrc), 
+    .ReqWrite(ReadRdy1), 
+    .Blank(Blank), 
+    .ReadIndex(PixelCounter[1:0]),
+    .WriteIndex(WriteBufferIndex),
+    .DataIn(ReqRead1), 
+    .VideoOut(ColorOut)
 );
 
 always @(posedge PixelClkSrc) begin
@@ -183,6 +191,19 @@ always @(posedge PixelClkSrc) begin
 
     if (PixelCounter == 640) Blank <= 1;
     if (PixelCounter == 799 && LineCounter < 480) Blank <= 0;
+end
+
+always @(posedge ReadRdy1) begin
+	 if (WriteBufferIndex < 2)
+	     WriteBufferIndex <= WriteBufferIndex + 1'b1;
+	 else
+	     WriteBufferIndex <= 1'b0;
+end
+
+always @(posedge ReadRdy1) begin
+    ReqAddr1 = ReqAddr1 + 1'b1;
+//	 ReqAddr2 = ReqAddr2 + 1'b1;
+//	 ReqAddr3 = ReqAddr3 + 1'b1;
 end
 
 endmodule
