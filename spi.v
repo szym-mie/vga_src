@@ -13,7 +13,7 @@ reg[2:0] PulseCnt = 1'b0;
 
 always @(posedge Sclk) begin
     if (!CSel) begin 
-        RecvByte <= PulseCnt == 7 ? 1'b1 : 1'b0;
+        RecvByte <= PulseCnt == 3'b111 ? 1'b1 : 1'b0;
         PulseCnt <= PulseCnt + 1'b1;
         DataBuffer <= {DataBuffer[6:0], Mosi};
     end

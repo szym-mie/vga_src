@@ -33,12 +33,12 @@
 //     
 
 // test pattern 1
-10000000 // noop byte 1
-10000000 // noop byte 2
-10000000 // noop byte 3
-10000000 // noop byte 4
-10000000 // noop byte 5
+10000001 // noop write byte 1
+10000001 // noop write byte 2
+10000001 // noop write byte 3
+10000001 // noop write byte 4
+10000001 // noop write byte 5
 00000000 // read byte 1
-00000100 // read byte 2
-00001000 // read byte 3
+00000000 // read byte 2
+00000000 // read byte 3
 

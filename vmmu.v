@@ -1,4 +1,4 @@
-// TODO: initial implementation (only read)
+// TODO: initial implementation
 module vmmu #(
     parameter AWIDTH = 19,
     parameter DWIDTH = 8,
@@ -30,6 +30,8 @@ module vmmu #(
 // bit 6:4 - unused
 // bit 7 - nop
 
+parameter SlotsFile = "/home/ise/FPGA_SHARED/vga_src/slots.bin.mem";
+
 reg Phase = 1'b0;
 reg [7:0] Slots[TSSIZE-1:0];
 reg [7:0] Slot;
@@ -39,8 +41,6 @@ wire[7:0] ReqReadData;
 
 wire MemNop = Slot[7];
 
-// only to be used during simulation
-//parameter SlotsFile = "slots.bin.mem";
 //initial begin
 //    if (SlotsFile != "") $readmemb(SlotsFile, Slots);
 //end
@@ -58,6 +58,7 @@ end
 
 
 assign MemDataPort = !MemWriteEnable ? ReqWriteData : 8'bzzzzzzzz;
+//assign MemDataPort = !MemWriteEnable ? ReqWriteData : 8'b00000000;
 assign ReqReadData = MemDataPort;
 
 
@@ -81,7 +82,7 @@ always @(posedge MemClk) begin
 
         Slot = Slots[SlotIndex];
         SlotIndex = SlotIndex + 1'b1;
-        MemOutputEnable = 1'b0; // kind of not needed for now
+        MemOutputEnable = 1'b0; // kind of not needed?
 	 end
 	 else
 	 begin
