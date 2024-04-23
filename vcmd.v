@@ -1,20 +1,28 @@
 module vcmd (
   input wire CmdRecv,
-  input wire CmdRecvInt,
-  input wire[7:0] CmdIn
+  input wire[7:0] CmdIn,
+  
+  output reg[18:0] MemOutAddr,
+  output wire[7:0] DataOut,  
+  input wire[1:0] DataIndex,
+  input wire HoldUpdate,
+  output reg DataRdy
 );
+
+reg[11:0] PositionX = 0;
+reg[11:0] PositionY = 0;
 
 localparam Noop = 8'h00;
 localparam BufSwap = 8'h01;
 localparam SetNoInc = 8'h10; // TODO: later
 localparam SetHInc = 8'h11; // TODO: later
 localparam Set0 = 8'h12; // TODO: later
-localparam SetX = 8'h20;
-localparam SetY = 8'h30;
-localparam Write1U = 8'h40; // TODO: later
+localparam SetX = 8'h2x;
+localparam SetY = 8'h3x;
+localparam Write1U = 8'h40;
 localparam Write1P = 8'h41; // TODO: later
 localparam WriteNU = 8'h42; // TODO: later
-localparam WriteNP = 8'h43;
+localparam WriteNP = 8'h43; // TODO: later
 
 localparam ReadCmdId = 4'h0;
 localparam ReadSetXH = 4'h1;
@@ -25,75 +33,88 @@ localparam ReadByte1 = 4'h8;
 localparam ReadByte2 = 4'h9;
 localparam ReadByte3 = 4'hA;
 
-reg[3:0] State = 4'b0;
-reg[15:0] PositionX;
-reg[15:0] PositionY;
-reg[7:0] DataBuffer[3:0];
+reg[3:0] State = 0;
+reg[7:0] DataBuffer[2:0];
+reg[7:0] DataOutBuffer[2:0];
 
-function [3:0]SelectCmd;
-  input[7:0] CmdId;
+reg[18:0] MemAddr = 0;
+reg[18:0] NextMemAddr = 0;
+
+function [3:0] SelectCmd(input [7:0] CmdId);
   begin
-    case (CmdId)
+    casex (CmdId)
       Noop:
         SelectCmd = ReadCmdId;
       SetX:
-        SelectCmd = ReadSetXH;
+		  begin
+		    PositionX[11:8] = CmdId[3:0];
+			 SelectCmd = ReadSetXL;
+		  end
       SetY:
-        SelectCmd = ReadSetYH;
-      WriteNP:
-        SelectCmd = ReadByte1; // TODO: buffer
+		  begin
+		    PositionY[11:8] = CmdId[3:0];
+			 SelectCmd = ReadSetYL;
+		  end
+      Write1P:
+		  begin
+          SelectCmd = ReadByte1; // TODO: buffer
+          NextMemAddr = NextMemAddr + 3;
+		    if (MemAddr >= 230_400) NextMemAddr = 0;
+		  end
     endcase
   end
 endfunction
+
+assign DataOut = DataOutBuffer[DataIndex];
 
 always @(posedge CmdRecv) begin
   case (State)
     ReadCmdId: 
       begin
-        DataBuffer[0] <= 8'b0;
-        DataBuffer[1] <= 8'b0;
-        DataBuffer[2] <= 8'b0;
-        DataBuffer[3] <= 8'b0;
-        State <= SelectCmd(CmdIn);
-      end
-    ReadSetXH:
-      begin
-        PositionX[0] <= CmdIn;
-        State <= ReadSetXL;
+        State = SelectCmd(CmdIn);
       end
     ReadSetXL:
       begin
-        DataBuffer[1] <= CmdIn;
-        State <= ReadCmdId;
-      end
-    ReadSetYH:
-      begin
-        DataBuffer[0] <= CmdIn;
-        State <= ReadSetYL;
+        PositionX[7:0] = CmdIn;
+		  NextMemAddr = PositionY * 480 + PositionX * 3;
+        State = ReadCmdId;
       end
     ReadSetYL:
       begin
-        DataBuffer[1] <= CmdIn;
-        State <= ReadCmdId;
+        PositionY[7:0] = CmdIn;
+		  NextMemAddr = PositionY * 480 + PositionX * 3;
+        State = ReadCmdId;
       end
     ReadByte1:
       begin
-        DataBuffer[0] <= CmdIn;
-        State <= ReadByte2;
+        DataBuffer[0] = CmdIn;
+        State = ReadByte2;
       end
     ReadByte2:
       begin
-        DataBuffer[1] <= CmdIn;
-        State <= ReadByte3;
+        DataBuffer[1] = CmdIn;
+		  DataRdy = 1'b0;
+        State = ReadByte3;
       end
     ReadByte3:
       begin
-        DataBuffer[2] <= CmdIn;
-        State <= ReadCmdId;
+        DataBuffer[2] = CmdIn;
+        MemAddr = NextMemAddr - 3;
+		  DataRdy = 1'b1;
+        State = ReadCmdId;
       end
     default:
-      State <= ReadCmdId;
+      State = ReadCmdId;
   endcase
 end
-    
+
+always @(negedge HoldUpdate) begin
+  if (DataRdy) begin
+    MemOutAddr = MemAddr;
+    DataOutBuffer[0] = DataBuffer[0];
+    DataOutBuffer[1] = DataBuffer[1];
+    DataOutBuffer[2] = DataBuffer[2];
+  end
+end
+
 endmodule

@@ -7,6 +7,8 @@ module vga (
     input wire MainClkSrc,
     output wire[18:0] MemAddr,
     inout wire[7:0] MemData,
+	 output wire TestOut1,
+	 output wire TestOut2,
     output wire MemWE,
     output wire MemOE,
     output wire[5:0] ColorOut,
@@ -14,7 +16,7 @@ module vga (
     output reg VsyncOut,
     input wire Sclk,
     input wire Mosi,
-    input wire Csel
+    input wire CSel
 );
 
 wire PixelClkIbufg;
@@ -132,6 +134,10 @@ vcounter #(
     LineCounter
 );
 
+wire SpiByteRdy;
+wire[7:0] SpiByteRecv;
+wire[18:0] SpiWriteAddr;
+wire[7:0] SpiWriteOut;
 
 reg[18:0] ReqAddr1 = 19'b000_0000_0000_0000_0000;
 reg[18:0] ReqAddr2 = 19'b000_0000_0000_0000_0001;
@@ -142,10 +148,32 @@ wire[7:0] ReqRead1;
 wire[7:0] ReqRead2;
 wire ReadRdy1;
 wire ReadRdy2;
+reg[1:0] SpiWriteIndex = 0;
+reg[1:0] SpiWriteCount = 0;
+reg SpiWriteTrig;
+wire SpiWriteRdy;
 
 reg[7:0] ReqWrite = 8'b00_00_11_00;
 
 reg[1:0] WriteBufferIndex = 1'b0; 
+
+spi Spi (
+    Sclk,
+	 Mosi,
+	 CSel,
+	 SpiByteRdy,
+	 SpiByteRecv
+);
+
+vcmd VideoCmd (
+	 SpiByteRdy,
+    SpiByteRecv,
+	 SpiWriteAddr,
+	 SpiWriteOut,
+	 SpiWriteIndex,
+	 !MemWE,
+	 SpiWriteRdy
+);
 
 vmmu #(
     .AWIDTH(19),
@@ -154,17 +182,21 @@ vmmu #(
 ) VMMU (
     .MemClk(MemClkSrc),
     .ReqAddrSrc1(ReqAddr1),
-    .ReqAddrSrc2(ReqAddr2),
-    .ReqAddrSrc3(ReqAddr3),
-    .ReqAddrSrc4(ReqAddr4),
+    .ReqAddrSrc2(SpiWriteAddr),
+    .ReqAddrSrc3(SpiWriteAddr + 1),
+    .ReqAddrSrc4(SpiWriteAddr + 2),
     .ReqReadData1(ReqRead1),
     .ReadDataRdy1(ReadRdy1),
     .ReqReadData2(ReqRead2),
     .ReadDataRdy2(ReadRdy2),
-    .ReqWriteData(ReqWrite),
+    .ReqWriteData(SpiWriteOut),
+	 .WriteDataTrig(SpiWriteTrig),
+	 .WriteDataRdy(WriteRdy),
     .MemAddrPort(MemAddr),
     .MemDataPort(MemData),
     .MemWriteEnable(MemWE),
+	 .TestOut1(TestOut1),
+	 .TestOut2(TestOut2),
     .MemOutputEnable(MemOE)
 );
 
@@ -193,17 +225,29 @@ always @(posedge PixelClkSrc) begin
     if (PixelCounter == 799 && LineCounter < 480) Blank <= 0;
 end
 
-always @(posedge ReadRdy1) begin
-	 if (WriteBufferIndex < 2)
-	     WriteBufferIndex <= WriteBufferIndex + 1'b1;
-	 else
-	     WriteBufferIndex <= 1'b0;
+always @(posedge WriteRdy) begin
+    SpiWriteIndex = SpiWriteIndex + 1;
+    if (SpiWriteRdy && SpiWriteCount == 0) begin
+	     SpiWriteCount = 3;
+		  SpiWriteIndex = 0;
+	 end
+	 
+	 if (SpiWriteCount > 0) begin
+	     SpiWriteTrig = 1'b1;
+        SpiWriteCount = SpiWriteCount - 1;
+    end else begin
+	     SpiWriteTrig = 1'b0;
+	 end
 end
 
 always @(posedge ReadRdy1) begin
-    ReqAddr1 = ReqAddr1 + 1'b1;
-//	 ReqAddr2 = ReqAddr2 + 1'b1;
-//	 ReqAddr3 = ReqAddr3 + 1'b1;
+	 if (WriteBufferIndex < 2)
+	     WriteBufferIndex = WriteBufferIndex + 1'b1;
+	 else
+	     WriteBufferIndex = 1'b0;
+		  
+	 if (PixelCounter < 640) ReqAddr1 = ReqAddr1 + 1'b1;
+    if (LineCounter >= 480 && LineCounter < 525) ReqAddr1 = 1'b0;
 end
 
 endmodule
