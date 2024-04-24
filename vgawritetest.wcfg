@@ -10,7 +10,15 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="32" />
+   <WVObjectSize size="35" />
+   <wvobject fp_name="/vgawritetest/uut/PixelClkSrc" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">PixelClkSrc</obj_property>
+      <obj_property name="ObjectShortName">PixelClkSrc</obj_property>
+   </wvobject>
+   <wvobject fp_name="/vgawritetest/uut/MemClkSrc" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">MemClkSrc</obj_property>
+      <obj_property name="ObjectShortName">MemClkSrc</obj_property>
+   </wvobject>
    <wvobject fp_name="/vgawritetest/uut/VideoCmd/CmdRecv" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">CmdRecv</obj_property>
       <obj_property name="ObjectShortName">CmdRecv</obj_property>
@@ -129,6 +137,11 @@
    <wvobject fp_name="/vgawritetest/MemOE" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">MemOE</obj_property>
       <obj_property name="ObjectShortName">MemOE</obj_property>
+   </wvobject>
+   <wvobject fp_name="/vgawritetest/uut/VMMU/Phase" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">Phase[1:0]</obj_property>
+      <obj_property name="ObjectShortName">Phase[1:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/vgawritetest/uut/SpiWriteIndex" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">SpiWriteIndex[1:0]</obj_property>

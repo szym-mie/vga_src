@@ -36,14 +36,14 @@ module vmmu #(
 
 parameter SlotsFile = "/home/ise/FPGA_SHARED/vga_src/slots.bin.mem";
 
-reg Phase = 1'b0;
+reg[1:0] Phase = 2'b00;
 reg MemNop = 1'b0;
 reg WriteEnable = 1'b0;
 assign TestOut1 = WriteEnable;
 assign TestOut2 = MemNop;
-reg [7:0] Slots[TSSIZE-1:0];
-reg [7:0] Slot;
-reg [2:0] SlotIndex = 3'b000;
+reg[7:0] Slots[TSSIZE-1:0];
+reg[7:0] Slot;
+reg[2:0] SlotIndex = 3'b000;
 
 wire[7:0] ReqReadData;
 
@@ -62,18 +62,22 @@ initial begin
     Slots[7] = 8'b00000000; // read byte 3
 end
 
+localparam PhaseAddressSetup = 2'b00;
+localparam PhaseDirectionChange = 2'b01;
+localparam PhaseDataSetup = 2'b10;
+localparam PhaseDataSample = 2'b11;
 
 assign MemDataPort = !MemWriteEnable ? ReqWriteData : 8'bzzzzzzzz;
 assign ReqReadData = MemDataPort;
 
-assign MemWriteEnable = !WriteEnable | WriteDataRdy;
+assign MemWriteEnable = !WriteEnable | !WriteDataRdy;
 assign MemOutputEnable = WriteEnable;
 
 always @(posedge MemClk) begin
     ReadDataRdy1 = 1'b0;
 	 ReadDataRdy2 = 1'b0;
-    WriteDataRdy = 1'b0;
-	 
+    // WriteDataRdy = 1'b0;
+	 /*
 	 if (Phase) begin
 	     //MemWriteEnable = 1'b1;
         if (!WriteEnable && !MemNop) begin
@@ -105,9 +109,49 @@ always @(posedge MemClk) begin
 		  end
 		  
 		  // if (WriteEnable && !MemNop && WriteDataTrig) MemWriteEnable = 1'b0;
-		  /*if (WriteEnable && !MemNop) MemWriteEnable = 1'b0;
-		  else MemWriteEnable = 1'b1;*/
+		  // if (WriteEnable && !MemNop) MemWriteEnable = 1'b0;
+		  // else MemWriteEnable = 1'b1;
 	 end
+	 */
+	 
+	 case (Phase)
+        PhaseAddressSetup: begin
+		      if (!WriteEnable && !MemNop) begin
+                case (Slot[1])
+                    1'b0: begin
+                        ReqReadData1 = ReqReadData;
+			               ReadDataRdy1 = 1'b1;
+                    end
+                    1'b1: begin
+                        ReqReadData2 = ReqReadData;
+					         ReadDataRdy2 = 1'b1;
+                    end
+                endcase
+            end
+
+            Slot = Slots[SlotIndex];
+            SlotIndex = SlotIndex + 1'b1;
+		  
+		      case (Slot[3:2])
+                2'b00: MemAddrPort = ReqAddrSrc1;
+                2'b01: MemAddrPort = ReqAddrSrc2;
+                2'b10: MemAddrPort = ReqAddrSrc3;
+                2'b11: MemAddrPort = ReqAddrSrc4;
+            endcase
+            WriteEnable = Slot[0];
+		      MemNop = Slot[7];
+		      if (WriteEnable && !MemNop) WriteDataRdy = 1'b1;
+		  end
+        PhaseDirectionChange: begin
+		      // empty
+		  end
+        PhaseDataSetup: begin
+		      // empty
+		  end
+        PhaseDataSample: begin
+		      WriteDataRdy = 1'b0;
+		  end
+	 endcase
 	 
 	 Phase = Phase + 1;
 end

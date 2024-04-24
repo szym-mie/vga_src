@@ -22,7 +22,7 @@ module vgawritetest;
 	wire [7:0] MemData;
 
 	// Instantiate the Unit Under Test (UUT)
-	vga UUT (
+	vga uut (
 		.MainClkSrc(MainClkSrc), 
 		.MemAddr(MemAddr), 
 		.MemData(MemData), 
@@ -65,7 +65,7 @@ module vgawritetest;
 	initial begin
 		// Initialize Clock
 		MainClkSrc = 0;
-		forever #10 MainClkSrc = ~MainClkSrc;
+		forever #5 MainClkSrc = ~MainClkSrc;
 	end
 
 	initial begin

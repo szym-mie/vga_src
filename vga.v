@@ -1,4 +1,7 @@
 `timescale 1ns/1ps
+
+`include "spi.v"
+`include "vcmd.v"
 `include "vcounter.v"
 `include "vbuffer.v"
 `include "vmmu.v"
@@ -82,7 +85,7 @@ BUFG PixelClkBufgInst (
     .O(PixelClkSrc)
 );
 
-// memory clock using synthesized clock@100MHz
+// memory clock using synthesized clock@200MHz
 DCM_SP #(
     .CLKIN_PERIOD(10), // 10ns
     .CLK_FEEDBACK("NONE"),
@@ -140,9 +143,7 @@ wire[18:0] SpiWriteAddr;
 wire[7:0] SpiWriteOut;
 
 reg[18:0] ReqAddr1 = 19'b000_0000_0000_0000_0000;
-reg[18:0] ReqAddr2 = 19'b000_0000_0000_0000_0001;
-reg[18:0] ReqAddr3 = 19'b000_0000_0000_0000_0010;
-reg[18:0] ReqAddr4 = 19'b000_0000_0000_0000_0000;
+reg[18:0] ReqAddr2 = 19'b000_0000_0000_0000_0000;
 
 wire[7:0] ReqRead1;
 wire[7:0] ReqRead2;
@@ -153,26 +154,26 @@ reg[1:0] SpiWriteCount = 0;
 reg SpiWriteTrig;
 wire SpiWriteRdy;
 
-reg[7:0] ReqWrite = 8'b00_00_11_00;
+reg[7:0] ReqWrite = 8'b00_00_00_00;
 
 reg[1:0] WriteBufferIndex = 1'b0; 
 
 spi Spi (
     Sclk,
-	 Mosi,
-	 CSel,
-	 SpiByteRdy,
-	 SpiByteRecv
+	Mosi,
+	CSel,
+	SpiByteRdy,
+	SpiByteRecv
 );
 
 vcmd VideoCmd (
-	 SpiByteRdy,
+	SpiByteRdy,
     SpiByteRecv,
-	 SpiWriteAddr,
-	 SpiWriteOut,
-	 SpiWriteIndex,
-	 !MemWE,
-	 SpiWriteRdy
+	SpiWriteAddr,
+	SpiWriteOut,
+	SpiWriteIndex,
+	!MemWE,
+	SpiWriteRdy
 );
 
 vmmu #(
@@ -182,14 +183,18 @@ vmmu #(
 ) VMMU (
     .MemClk(MemClkSrc),
     .ReqAddrSrc1(ReqAddr1),
-    .ReqAddrSrc2(SpiWriteAddr),
+/*    .ReqAddrSrc2(SpiWriteAddr),
     .ReqAddrSrc3(SpiWriteAddr + 1),
-    .ReqAddrSrc4(SpiWriteAddr + 2),
+    .ReqAddrSrc4(SpiWriteAddr + 2),*/
+    .ReqAddrSrc2(ReqAddr2),
+    .ReqAddrSrc3(ReqAddr2 + 1),
+    .ReqAddrSrc4(ReqAddr2 + 2),
     .ReqReadData1(ReqRead1),
     .ReadDataRdy1(ReadRdy1),
     .ReqReadData2(ReqRead2),
     .ReadDataRdy2(ReadRdy2),
-    .ReqWriteData(SpiWriteOut),
+/*    .ReqWriteData(SpiWriteOut),*/
+    .ReqWriteData(ReqWrite),
 	 .WriteDataTrig(SpiWriteTrig),
 	 .WriteDataRdy(WriteRdy),
     .MemAddrPort(MemAddr),
@@ -213,6 +218,11 @@ vbuffer #(
     .DataIn(ReqRead1), 
     .VideoOut(ColorOut)
 );
+
+always @(negedge MemOE) begin
+    ReqAddr2 = ReqAddr2 + 1;
+	 ReqWrite = ReqWrite + 1;
+end
 
 always @(posedge PixelClkSrc) begin
     if (PixelCounter == 657) HsyncOut <= 0;

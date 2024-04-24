@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
-`include "spi.v"
 `include "vcmd.v"
+`include "spi.v"
 
 module vcmdtest;
 
@@ -53,10 +53,10 @@ module vcmdtest;
 	// VCMD
 
 	// Inputs
-	reg [1:0] DataIndex;
+	reg [1:0] CmdDataIndex;
 
 	// Outputs
-	wire [17:0] CmdMemAddr;
+	wire [18:0] CmdMemAddr;
 	wire [7:0] CmdDataOut;
 	wire CmdDataRdy;
 
@@ -64,7 +64,7 @@ module vcmdtest;
 	vcmd UUT (
 		.CmdRecv(DataRecv), 
 		.CmdIn(DataOut), 
-		.MemAddr(CmdMemAddr), 
+		.MemOutAddr(CmdMemAddr), 
 		.DataOut(CmdDataOut), 
 		.DataIndex(CmdDataIndex), 
 		.DataRdy(CmdDataRdy)
@@ -75,7 +75,7 @@ module vcmdtest;
 		Sclk = 0;
 		Mosi = 0;
 		CSel = 0;
-		DataIndex = 0;
+		CmdDataIndex = 0;
 
 		// Wait 100 ns for global reset to finish
 		#100;
