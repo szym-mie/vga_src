@@ -18,23 +18,21 @@ module vbuffer #(
 parameter WSIZE = BPP * PSIZE / 8;
 
 reg[7:0] WriteBuffer[WSIZE-1:0];
-reg[BPP-1:0] Buffer[PSIZE-1:0];
+reg[BPP-1:0] PixelBuffer[PSIZE-1:0];
 
 always @(posedge PixelClk) begin
 	 if (ReadIndex == 1'b0) begin
-	 	  Buffer[3] = WriteBuffer[2][7:2];
-		  Buffer[2] = { WriteBuffer[2][1:0], WriteBuffer[1][7:4] };
-		  Buffer[1] = { WriteBuffer[1][3:0], WriteBuffer[0][7:6] };
-		  Buffer[0] = WriteBuffer[0][5:0];
+	 	  PixelBuffer[3] <= WriteBuffer[2][5:0];
+		  PixelBuffer[2] <= { WriteBuffer[1][3:0], WriteBuffer[2][7:6] };
+		  PixelBuffer[1] <= { WriteBuffer[0][1:0], WriteBuffer[1][7:4] };
+		  PixelBuffer[0] <= WriteBuffer[0][7:2];
 	 end
 	 
-    if (Blank) begin
-	     VideoOut = 1'b0;
-    end
-    else VideoOut = Buffer[ReadIndex];
+    if (Blank) VideoOut <= 1'b0;
+    else VideoOut <= PixelBuffer[ReadIndex];
 end
     
-always @(posedge ReqWrite) begin
+always @(negedge ReqWrite) begin
     WriteBuffer[WriteIndex] = DataIn;
 end
 

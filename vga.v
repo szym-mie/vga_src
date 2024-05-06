@@ -1,7 +1,4 @@
 `timescale 1ns/1ps
-
-`include "spi.v"
-`include "vcmd.v"
 `include "vcounter.v"
 `include "vbuffer.v"
 `include "vmmu.v"
@@ -90,7 +87,7 @@ DCM_SP #(
     .CLKIN_PERIOD(10), // 10ns
     .CLK_FEEDBACK("NONE"),
     .CLKDV_DIVIDE(2.0), // not used
-    .CLKFX_MULTIPLY(2),
+    .CLKFX_MULTIPLY(4),
     .CLKFX_DIVIDE(2) // 4 for 50MHz
 ) MemClkDcmInst (
     .CLKIN(MainClkIbufg),
@@ -123,6 +120,8 @@ initial HsyncOut <= 1'b1;
 initial VsyncOut <= 1'b1;
 
 reg Blank = 0;
+reg CycleReadAddr = 1;
+
 wire[9:0] PixelCounter;
 wire[9:0] LineCounter;
 
@@ -139,41 +138,42 @@ vcounter #(
 
 wire SpiByteRdy;
 wire[7:0] SpiByteRecv;
-wire[18:0] SpiWriteAddr;
-wire[7:0] SpiWriteOut;
-
-reg[18:0] ReqAddr1 = 19'b000_0000_0000_0000_0000;
-reg[18:0] ReqAddr2 = 19'b000_0000_0000_0000_0000;
-
-wire[7:0] ReqRead1;
-wire[7:0] ReqRead2;
-wire ReadRdy1;
-wire ReadRdy2;
-reg[1:0] SpiWriteIndex = 0;
-reg[1:0] SpiWriteCount = 0;
-reg SpiWriteTrig;
-wire SpiWriteRdy;
-
-reg[7:0] ReqWrite = 8'b00_00_00_00;
 
 reg[1:0] WriteBufferIndex = 1'b0; 
 
 spi Spi (
+    MemClkSrc,
     Sclk,
-	Mosi,
-	CSel,
-	SpiByteRdy,
-	SpiByteRecv
+	 Mosi,
+	 CSel,
+	 SpiByteRdy,
+	 SpiByteRecv
 );
 
+assign TestOut1 = SpiByteRdy;
+assign TestOut2 = Sclk;
+
+wire[7:0] ReadData;
+wire[7:0] _ReadData;
+wire ReadRdy;
+wire _ReadRdy;
+
+wire WriteDataOutClk;
+wire HasWriteData;
+
+wire[7:0] WriteData;
+wire[18:0] WriteAddr;
+
+reg[18:0] ReadAddr = 19'b000_0000_0000_0000_0000;
+
 vcmd VideoCmd (
-	SpiByteRdy,
+	 SpiByteRdy,
+	 1'b1,
     SpiByteRecv,
-	SpiWriteAddr,
-	SpiWriteOut,
-	SpiWriteIndex,
-	!MemWE,
-	SpiWriteRdy
+	 WriteDataOutClk,
+	 HasWriteData,
+	 WriteAddr,
+	 WriteData
 );
 
 vmmu #(
@@ -182,26 +182,20 @@ vmmu #(
     .TSSIZE(8)
 ) VMMU (
     .MemClk(MemClkSrc),
-    .ReqAddrSrc1(ReqAddr1),
-/*    .ReqAddrSrc2(SpiWriteAddr),
-    .ReqAddrSrc3(SpiWriteAddr + 1),
-    .ReqAddrSrc4(SpiWriteAddr + 2),*/
-    .ReqAddrSrc2(ReqAddr2),
-    .ReqAddrSrc3(ReqAddr2 + 1),
-    .ReqAddrSrc4(ReqAddr2 + 2),
-    .ReqReadData1(ReqRead1),
-    .ReadDataRdy1(ReadRdy1),
-    .ReqReadData2(ReqRead2),
-    .ReadDataRdy2(ReadRdy2),
-/*    .ReqWriteData(SpiWriteOut),*/
-    .ReqWriteData(ReqWrite),
-	 .WriteDataTrig(SpiWriteTrig),
-	 .WriteDataRdy(WriteRdy),
+    .ReqAddrSrc1(ReadAddr),
+    .ReqAddrSrc2(WriteAddr),
+    .ReqAddrSrc3(1'b0),
+    .ReqAddrSrc4(1'b0),
+    .ReqReadData1(ReadData),
+    .ReadDataRdy1(ReadRdy),
+    .ReqReadData2(_ReadData),
+    .ReadDataRdy2(_ReadRdy),
+    .ReqWriteData(WriteData),
+	 .HasWriteData(HasWriteData),
+	 .WriteDataRdy(WriteDataOutClk),
     .MemAddrPort(MemAddr),
     .MemDataPort(MemData),
     .MemWriteEnable(MemWE),
-	 .TestOut1(TestOut1),
-	 .TestOut2(TestOut2),
     .MemOutputEnable(MemOE)
 );
 
@@ -211,53 +205,34 @@ vbuffer #(
     .PSIZE(4)
 ) VideoBuffer (
     .PixelClk(PixelClkSrc), 
-    .ReqWrite(ReadRdy1), 
+    .ReqWrite(ReadRdy), 
     .Blank(Blank), 
     .ReadIndex(PixelCounter[1:0]),
     .WriteIndex(WriteBufferIndex),
-    .DataIn(ReqRead1), 
+    .DataIn(ReadData), 
     .VideoOut(ColorOut)
 );
 
-always @(negedge MemOE) begin
-    ReqAddr2 = ReqAddr2 + 1;
-	 ReqWrite = ReqWrite + 1;
-end
-
 always @(posedge PixelClkSrc) begin
-    if (PixelCounter == 657) HsyncOut <= 0;
-    if (PixelCounter == 753) HsyncOut <= 1;
+    if (PixelCounter == 661) HsyncOut <= 0;
+    if (PixelCounter == 757) HsyncOut <= 1;
 
     if (LineCounter == 491) VsyncOut <= 0;
     if (LineCounter == 493) VsyncOut <= 1;
 
-    if (PixelCounter == 640) Blank <= 1;
+    if (PixelCounter == 643) Blank <= 1;
     if (PixelCounter == 799 && LineCounter < 480) Blank <= 0;
 end
 
-always @(posedge WriteRdy) begin
-    SpiWriteIndex = SpiWriteIndex + 1;
-    if (SpiWriteRdy && SpiWriteCount == 0) begin
-	     SpiWriteCount = 3;
-		  SpiWriteIndex = 0;
-	 end
-	 
-	 if (SpiWriteCount > 0) begin
-	     SpiWriteTrig = 1'b1;
-        SpiWriteCount = SpiWriteCount - 1;
-    end else begin
-	     SpiWriteTrig = 1'b0;
-	 end
-end
-
-always @(posedge ReadRdy1) begin
+always @(posedge ReadRdy) begin
 	 if (WriteBufferIndex < 2)
-	     WriteBufferIndex = WriteBufferIndex + 1'b1;
+	     WriteBufferIndex <= WriteBufferIndex + 1'b1;
 	 else
-	     WriteBufferIndex = 1'b0;
+	     WriteBufferIndex <= 1'b0;
 		  
-	 if (PixelCounter < 640) ReqAddr1 = ReqAddr1 + 1'b1;
-    if (LineCounter >= 480 && LineCounter < 525) ReqAddr1 = 1'b0;
+	 
+    if (LineCounter == 524) ReadAddr <= 1'b0;
+	 else if (!Blank) ReadAddr <= ReadAddr + 1'b1;
 end
 
 endmodule

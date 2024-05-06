@@ -1,7 +1,5 @@
 `timescale 1ns / 1ps
 
-`include "vga.v"
-
 module vgawritetest;
 
 	// Inputs
@@ -18,8 +16,12 @@ module vgawritetest;
 	wire HsyncOut;
 	wire VsyncOut;
 
+	reg [8:0] Counter = 8'h00;
+
 	// Bidirs
 	wire [7:0] MemData;
+	
+	assign MemData = Counter[8:1];
 
 	// Instantiate the Unit Under Test (UUT)
 	vga uut (
@@ -40,6 +42,7 @@ module vgawritetest;
 		begin
 			CSel = 1'b0;
 			// for (j = 0; j < 8; j = j + 1)
+			#PulseTime;
 			send_pulse(PulseTime, (Byte>>7) & 1);
 			send_pulse(PulseTime, (Byte>>6) & 1);
 			send_pulse(PulseTime, (Byte>>5) & 1);
@@ -48,7 +51,10 @@ module vgawritetest;
 			send_pulse(PulseTime, (Byte>>2) & 1);
 			send_pulse(PulseTime, (Byte>>1) & 1);
 			send_pulse(PulseTime, (Byte>>0) & 1);
+			Sclk = 1'b0;
+			#PulseTime;
 			CSel = 1'b1;
+			#PulseTime;
 		end
 	endtask
 	
@@ -75,11 +81,10 @@ module vgawritetest;
 		CSel = 0;
 
 		// Wait 100 ns for global reset to finish
-		#100;
+		#500;
         
 		// Add stimulus here
 		// Very fast SPI clock (100MHz)
-		send_byte(10, 8'b01000001);
 		send_byte(10, 8'b11000000);
 		send_byte(10, 8'b11000000);
 		send_byte(10, 8'b11000000);
@@ -88,11 +93,12 @@ module vgawritetest;
 		#160;
 		
 		// Another byte at next location
-		send_byte(10, 8'b01000001);
 		send_byte(10, 8'b00000011);
 		send_byte(10, 8'b00000011);
 		send_byte(10, 8'b00000011);
 	end
+	
+	always @(posedge MainClkSrc) Counter <= Counter + 1'b1;
       
 endmodule
 
