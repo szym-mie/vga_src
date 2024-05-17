@@ -10,27 +10,27 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="13" />
-   <wvobject fp_name="/vgawritetest/uut/MainClkSrc" type="logic" db_ref_id="1">
+   <WVObjectSize size="10" />
+   <wvobject fp_name="/vgawritetest/UUT/MainClkSrc" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">MainClkSrc</obj_property>
       <obj_property name="ObjectShortName">MainClkSrc</obj_property>
    </wvobject>
-   <wvobject fp_name="/vgawritetest/uut/WriteData" type="array" db_ref_id="1">
+   <wvobject fp_name="/vgawritetest/UUT/WriteData" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">WriteData[7:0]</obj_property>
       <obj_property name="ObjectShortName">WriteData[7:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/vgawritetest/uut/WriteAddr" type="array" db_ref_id="1">
+   <wvobject fp_name="/vgawritetest/UUT/WriteAddr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">WriteAddr[18:0]</obj_property>
       <obj_property name="ObjectShortName">WriteAddr[18:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/vgawritetest/uut/MemAddr" type="array" db_ref_id="1">
+   <wvobject fp_name="/vgawritetest/UUT/MemAddr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">MemAddr[18:0]</obj_property>
       <obj_property name="ObjectShortName">MemAddr[18:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/vgawritetest/uut/MemData" type="array" db_ref_id="1">
+   <wvobject fp_name="/vgawritetest/UUT/MemData" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">MemData[7:0]</obj_property>
       <obj_property name="ObjectShortName">MemData[7:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
@@ -43,32 +43,32 @@
          <obj_property name="label">DataFIFO</obj_property>
          <obj_property name="DisplayName">label</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
-         <wvobject fp_name="/vgawritetest/uut/VideoCmd/DataFIFO/InIndex" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">InIndex[3:0]</obj_property>
-            <obj_property name="ObjectShortName">InIndex[3:0]</obj_property>
+         <wvobject fp_name="/vgawritetest/UUT/VideoCmd/DataFIFO/InIndex" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">InIndex[1:0]</obj_property>
+            <obj_property name="ObjectShortName">InIndex[1:0]</obj_property>
             <obj_property name="Radix">HEXRADIX</obj_property>
          </wvobject>
-         <wvobject fp_name="/vgawritetest/uut/VideoCmd/DataFIFO/OutIndex" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">OutIndex[3:0]</obj_property>
-            <obj_property name="ObjectShortName">OutIndex[3:0]</obj_property>
+         <wvobject fp_name="/vgawritetest/UUT/VideoCmd/DataFIFO/OutIndex" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">OutIndex[1:0]</obj_property>
+            <obj_property name="ObjectShortName">OutIndex[1:0]</obj_property>
             <obj_property name="Radix">HEXRADIX</obj_property>
          </wvobject>
-         <wvobject fp_name="/vgawritetest/uut/VideoCmd/DataFIFO/DataIn" type="array" db_ref_id="1">
+         <wvobject fp_name="/vgawritetest/UUT/VideoCmd/DataFIFO/DataIn" type="array" db_ref_id="1">
             <obj_property name="ElementShortName">DataIn[7:0]</obj_property>
             <obj_property name="ObjectShortName">DataIn[7:0]</obj_property>
             <obj_property name="Radix">HEXRADIX</obj_property>
          </wvobject>
-         <wvobject fp_name="/vgawritetest/uut/VideoCmd/DataFIFO/IsFull" type="logic" db_ref_id="1">
+         <wvobject fp_name="/vgawritetest/UUT/VideoCmd/DataFIFO/IsFull" type="logic" db_ref_id="1">
             <obj_property name="ElementShortName">IsFull</obj_property>
             <obj_property name="ObjectShortName">IsFull</obj_property>
          </wvobject>
-         <wvobject fp_name="/vgawritetest/uut/VideoCmd/DataFIFO/IsEmpty" type="logic" db_ref_id="1">
+         <wvobject fp_name="/vgawritetest/UUT/VideoCmd/DataFIFO/IsEmpty" type="logic" db_ref_id="1">
             <obj_property name="ElementShortName">IsEmpty</obj_property>
             <obj_property name="ObjectShortName">IsEmpty</obj_property>
          </wvobject>
-         <wvobject fp_name="/vgawritetest/uut/VideoCmd/DataFIFO/Buffer" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">Buffer[7:0,7:0]</obj_property>
-            <obj_property name="ObjectShortName">Buffer[7:0,7:0]</obj_property>
+         <wvobject fp_name="/vgawritetest/UUT/VideoCmd/DataFIFO/Buffer" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">Buffer[3:0,7:0]</obj_property>
+            <obj_property name="ObjectShortName">Buffer[3:0,7:0]</obj_property>
             <obj_property name="Radix">HEXRADIX</obj_property>
          </wvobject>
       </wvobject>
@@ -76,67 +76,72 @@
          <obj_property name="label">AddrFIFO</obj_property>
          <obj_property name="DisplayName">label</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
-         <wvobject fp_name="/vgawritetest/uut/VideoCmd/AddrFIFO/InIndex" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">InIndex[3:0]</obj_property>
-            <obj_property name="ObjectShortName">InIndex[3:0]</obj_property>
+         <wvobject fp_name="/vgawritetest/UUT/VideoCmd/AddrFIFO/InIndex" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">InIndex[1:0]</obj_property>
+            <obj_property name="ObjectShortName">InIndex[1:0]</obj_property>
             <obj_property name="Radix">HEXRADIX</obj_property>
          </wvobject>
-         <wvobject fp_name="/vgawritetest/uut/VideoCmd/AddrFIFO/OutIndex" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">OutIndex[3:0]</obj_property>
-            <obj_property name="ObjectShortName">OutIndex[3:0]</obj_property>
+         <wvobject fp_name="/vgawritetest/UUT/VideoCmd/AddrFIFO/OutIndex" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">OutIndex[1:0]</obj_property>
+            <obj_property name="ObjectShortName">OutIndex[1:0]</obj_property>
             <obj_property name="Radix">HEXRADIX</obj_property>
          </wvobject>
-         <wvobject fp_name="/vgawritetest/uut/VideoCmd/AddrFIFO/DataIn" type="array" db_ref_id="1">
+         <wvobject fp_name="/vgawritetest/UUT/VideoCmd/AddrFIFO/DataIn" type="array" db_ref_id="1">
             <obj_property name="ElementShortName">DataIn[18:0]</obj_property>
             <obj_property name="ObjectShortName">DataIn[18:0]</obj_property>
             <obj_property name="Radix">HEXRADIX</obj_property>
          </wvobject>
-         <wvobject fp_name="/vgawritetest/uut/VideoCmd/AddrFIFO/IsFull" type="logic" db_ref_id="1">
+         <wvobject fp_name="/vgawritetest/UUT/VideoCmd/AddrFIFO/IsFull" type="logic" db_ref_id="1">
             <obj_property name="ElementShortName">IsFull</obj_property>
             <obj_property name="ObjectShortName">IsFull</obj_property>
          </wvobject>
-         <wvobject fp_name="/vgawritetest/uut/VideoCmd/AddrFIFO/IsEmpty" type="logic" db_ref_id="1">
+         <wvobject fp_name="/vgawritetest/UUT/VideoCmd/AddrFIFO/IsEmpty" type="logic" db_ref_id="1">
             <obj_property name="ElementShortName">IsEmpty</obj_property>
             <obj_property name="ObjectShortName">IsEmpty</obj_property>
          </wvobject>
-         <wvobject fp_name="/vgawritetest/uut/VideoCmd/AddrFIFO/Buffer" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">Buffer[7:0,18:0]</obj_property>
-            <obj_property name="ObjectShortName">Buffer[7:0,18:0]</obj_property>
+         <wvobject fp_name="/vgawritetest/UUT/VideoCmd/AddrFIFO/Buffer" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">Buffer[3:0,18:0]</obj_property>
+            <obj_property name="ObjectShortName">Buffer[3:0,18:0]</obj_property>
             <obj_property name="Radix">HEXRADIX</obj_property>
          </wvobject>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VideoCmd/ByteRecvClk" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VideoCmd/ByteRecvClk" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">ByteRecvClk</obj_property>
          <obj_property name="ObjectShortName">ByteRecvClk</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VideoCmd/DataModeEnable" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">DataModeEnable</obj_property>
-         <obj_property name="ObjectShortName">DataModeEnable</obj_property>
-      </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VideoCmd/ByteIn" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VideoCmd/ByteIn" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">ByteIn[7:0]</obj_property>
          <obj_property name="ObjectShortName">ByteIn[7:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VideoCmd/NextAddr" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VideoCmd/NextAddr" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">NextAddr[18:0]</obj_property>
          <obj_property name="ObjectShortName">NextAddr[18:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VideoCmd/ReadOutClk" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VideoCmd/ReadOutClk" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">ReadOutClk</obj_property>
          <obj_property name="ObjectShortName">ReadOutClk</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VideoCmd/HasReadData" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VideoCmd/HasReadData" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">HasReadData</obj_property>
          <obj_property name="ObjectShortName">HasReadData</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VideoCmd/AddrOut" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VideoCmd/State" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">State[3:0]</obj_property>
+         <obj_property name="ObjectShortName">State[3:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/vgawritetest/UUT/VideoCmd/PushByte" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">PushByte</obj_property>
+         <obj_property name="ObjectShortName">PushByte</obj_property>
+      </wvobject>
+      <wvobject fp_name="/vgawritetest/UUT/VideoCmd/AddrOut" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">AddrOut[18:0]</obj_property>
          <obj_property name="ObjectShortName">AddrOut[18:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VideoCmd/DataOut" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VideoCmd/DataOut" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">DataOut[7:0]</obj_property>
          <obj_property name="ObjectShortName">DataOut[7:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
@@ -146,38 +151,38 @@
       <obj_property name="label">SPI</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
-      <wvobject fp_name="/vgawritetest/uut/Spi/Sclk" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/Spi/Sclk" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">Sclk</obj_property>
          <obj_property name="ObjectShortName">Sclk</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/Spi/Mosi" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/Spi/Mosi" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">Mosi</obj_property>
          <obj_property name="ObjectShortName">Mosi</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/Spi/CSel" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/Spi/CSel" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">CSel</obj_property>
          <obj_property name="ObjectShortName">CSel</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/Spi/Clk" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/Spi/Clk" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">Clk</obj_property>
          <obj_property name="ObjectShortName">Clk</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/Spi/BitCnt" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/Spi/BitCnt" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">BitCnt[2:0]</obj_property>
          <obj_property name="ObjectShortName">BitCnt[2:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/Spi/ByteDataRecv" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/Spi/ByteDataRecv" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">ByteDataRecv[7:0]</obj_property>
          <obj_property name="ObjectShortName">ByteDataRecv[7:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/Spi/DataOut" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/Spi/DataOut" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">DataOut[7:0]</obj_property>
          <obj_property name="ObjectShortName">DataOut[7:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/Spi/DataRecv" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/Spi/DataRecv" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">DataRecv</obj_property>
          <obj_property name="ObjectShortName">DataRecv</obj_property>
       </wvobject>
@@ -186,75 +191,80 @@
       <obj_property name="label">VMMU</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/ReqAddrSrc1" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/ReqAddrSrc1" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">ReqAddrSrc1[18:0]</obj_property>
          <obj_property name="ObjectShortName">ReqAddrSrc1[18:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/ReqAddrSrc2" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/ReqAddrSrc2" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">ReqAddrSrc2[18:0]</obj_property>
          <obj_property name="ObjectShortName">ReqAddrSrc2[18:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/MemAddrPort" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/MemAddrPort" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">MemAddrPort[18:0]</obj_property>
          <obj_property name="ObjectShortName">MemAddrPort[18:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/ReqWriteData" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/NextAddr" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">NextAddr[18:0]</obj_property>
+         <obj_property name="ObjectShortName">NextAddr[18:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/ReqWriteData" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">ReqWriteData[7:0]</obj_property>
          <obj_property name="ObjectShortName">ReqWriteData[7:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/ReqReadData1" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/ReqReadData1" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">ReqReadData1[7:0]</obj_property>
          <obj_property name="ObjectShortName">ReqReadData1[7:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/ReqReadData2" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/ReqReadData2" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">ReqReadData2[7:0]</obj_property>
          <obj_property name="ObjectShortName">ReqReadData2[7:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/ReadDataRdy1" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/ReadDataRdy1" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">ReadDataRdy1</obj_property>
          <obj_property name="ObjectShortName">ReadDataRdy1</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/ReadDataRdy2" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/ReadDataRdy2" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">ReadDataRdy2</obj_property>
          <obj_property name="ObjectShortName">ReadDataRdy2</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/HasWriteData" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/HasWriteData" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">HasWriteData</obj_property>
          <obj_property name="ObjectShortName">HasWriteData</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/WriteDataRdy" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/WriteDataRdy" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">WriteDataRdy</obj_property>
          <obj_property name="ObjectShortName">WriteDataRdy</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/MemClk" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/MemClk" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">MemClk</obj_property>
          <obj_property name="ObjectShortName">MemClk</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/MemWriteEnable" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/MemWriteEnable" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">MemWriteEnable</obj_property>
          <obj_property name="ObjectShortName">MemWriteEnable</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/MemOutputEnable" type="logic" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/MemOutputEnable" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">MemOutputEnable</obj_property>
          <obj_property name="ObjectShortName">MemOutputEnable</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/Phase" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/Phase" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">Phase[1:0]</obj_property>
          <obj_property name="ObjectShortName">Phase[1:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/Slot" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/Slot" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">Slot[7:0]</obj_property>
          <obj_property name="ObjectShortName">Slot[7:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VMMU/SlotIndex" type="array" db_ref_id="1">
+      <wvobject fp_name="/vgawritetest/UUT/VMMU/SlotIndex" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">SlotIndex[2:0]</obj_property>
          <obj_property name="ObjectShortName">SlotIndex[2:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
@@ -263,43 +273,9 @@
    <wvobject fp_name="group75" type="group">
       <obj_property name="label">VBUF</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject fp_name="/vgawritetest/uut/VideoBuffer/ReadIndex" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">ReadIndex[1:0]</obj_property>
-         <obj_property name="ObjectShortName">ReadIndex[1:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
-      </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VideoBuffer/PixelBuffer" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">PixelBuffer[3:0,5:0]</obj_property>
-         <obj_property name="ObjectShortName">PixelBuffer[3:0,5:0]</obj_property>
-         <obj_property name="Radix">BINARYRADIX</obj_property>
-      </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VideoBuffer/WriteIndex" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">WriteIndex[1:0]</obj_property>
-         <obj_property name="ObjectShortName">WriteIndex[1:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
-      </wvobject>
-      <wvobject fp_name="/vgawritetest/uut/VideoBuffer/WriteBuffer" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">WriteBuffer[2:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">WriteBuffer[2:0,7:0]</obj_property>
-         <obj_property name="Radix">BINARYRADIX</obj_property>
-      </wvobject>
    </wvobject>
-   <wvobject fp_name="/vgawritetest/uut/VideoBuffer/PixelClk" type="logic" db_ref_id="1">
+   <wvobject fp_name="/vgawritetest/UUT/VideoBuffer/PixelClk" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">PixelClk</obj_property>
       <obj_property name="ObjectShortName">PixelClk</obj_property>
-   </wvobject>
-   <wvobject fp_name="/vgawritetest/uut/Blank" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">Blank</obj_property>
-      <obj_property name="ObjectShortName">Blank</obj_property>
-   </wvobject>
-   <wvobject fp_name="/vgawritetest/uut/VideoCounter/PixelCounter" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">PixelCounter[9:0]</obj_property>
-      <obj_property name="ObjectShortName">PixelCounter[9:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/vgawritetest/uut/VideoCounter/LineCounter" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">LineCounter[9:0]</obj_property>
-      <obj_property name="ObjectShortName">LineCounter[9:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
 </wave_config>

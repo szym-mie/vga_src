@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-`include "vcounter.v"
+`include "vctl.v"
 `include "vbuffer.v"
 `include "vmmu.v"
 
@@ -12,8 +12,8 @@ module vga (
     output wire MemWE,
     output wire MemOE,
     output wire[5:0] ColorOut,
-    output reg HsyncOut,
-    output reg VsyncOut,
+    output wire HsyncOut,
+    output wire VsyncOut,
     input wire Sclk,
     input wire Mosi,
     input wire CSel
@@ -51,7 +51,7 @@ IBUFG MainClkIbufgInst(
 // pixel clock using synthesized clock@25MHz
 DCM_SP #(
     .CLKIN_PERIOD(10), // 10ns
-    .CLK_FEEDBACK("NONE"),
+    .CLK_FEEDBACK("1X"),
     .CLKDV_DIVIDE(2.0), // not used
     .CLKFX_MULTIPLY(2),
     .CLKFX_DIVIDE(8)
@@ -116,30 +116,50 @@ BUFG MemClkBufgInst (
     .O(MemClkSrc)
 );
 
-initial HsyncOut <= 1'b1;
-initial VsyncOut <= 1'b1;
-
-reg Blank = 0;
+wire ActHorz;
+wire ActVert;
+wire[18:0] PixelAddr;
 reg CycleReadAddr = 1;
 
-wire[9:0] PixelCounter;
-wire[9:0] LineCounter;
+wire[9:0] PixelCnt;
+wire[9:0] LineCnt;
 
-vcounter #(
-    .XBITS(10),
-    .YBITS(10),
+vctl #(
+    .XWIDTH(10),
+    .YWIDTH(10),
+	 .AWIDTH(19),
     .XMAX(799),
-    .YMAX(524)
-) VideoCounter (
-    PixelClkSrc,
-    PixelCounter,
-    LineCounter
+    .YMAX(524),
+	 .HDMIN(3),
+	 .HDMAX(643),
+	 .VDMIN(524),
+	 .VDMAX(479)
+) VideoCtl (
+    .PixelClk(PixelClkSrc),
+    .PixelCnt(PixelCnt),
+    .LineCnt(LineCnt),
+	 .AddrOut(PixelAddr),
+	 .AddrClkOut(),
+	 .IsActHorz(ActHorz),
+	 .IsActVert(ActVert)
+);
+
+vsig #(
+    .XWIDTH(10),
+	 .YWIDTH(10)
+) VideoSig (
+    .PixelClk(PixelClkSrc),
+    .PixelCnt(PixelCnt),
+    .LineCnt(LineCnt),
+	 .IsActHorz(ActHorz),
+	 .IsActVert(ActVert),
+	 .HSync(HsyncOut),
+	 .VSync(VsyncOut),
+	 .Blank(Blank)
 );
 
 wire SpiByteRdy;
 wire[7:0] SpiByteRecv;
-
-reg[1:0] WriteBufferIndex = 1'b0; 
 
 spi Spi (
     MemClkSrc,
@@ -168,7 +188,6 @@ reg[18:0] ReadAddr = 19'b000_0000_0000_0000_0000;
 
 vcmd VideoCmd (
 	 SpiByteRdy,
-	 1'b1,
     SpiByteRecv,
 	 WriteDataOutClk,
 	 HasWriteData,
@@ -182,7 +201,7 @@ vmmu #(
     .TSSIZE(8)
 ) VMMU (
     .MemClk(MemClkSrc),
-    .ReqAddrSrc1(ReadAddr),
+    .ReqAddrSrc1(PixelAddr),
     .ReqAddrSrc2(WriteAddr),
     .ReqAddrSrc3(1'b0),
     .ReqAddrSrc4(1'b0),
@@ -200,39 +219,13 @@ vmmu #(
 );
 
 vbuffer #(
-    .IWIDTH(2), 
-    .BPP(6),
-    .PSIZE(4)
+    .BPP(6)
 ) VideoBuffer (
     .PixelClk(PixelClkSrc), 
     .ReqWrite(ReadRdy), 
     .Blank(Blank), 
-    .ReadIndex(PixelCounter[1:0]),
-    .WriteIndex(WriteBufferIndex),
     .DataIn(ReadData), 
     .VideoOut(ColorOut)
 );
-
-always @(posedge PixelClkSrc) begin
-    if (PixelCounter == 661) HsyncOut <= 0;
-    if (PixelCounter == 757) HsyncOut <= 1;
-
-    if (LineCounter == 491) VsyncOut <= 0;
-    if (LineCounter == 493) VsyncOut <= 1;
-
-    if (PixelCounter == 643) Blank <= 1;
-    if (PixelCounter == 799 && LineCounter < 480) Blank <= 0;
-end
-
-always @(posedge ReadRdy) begin
-	 if (WriteBufferIndex < 2)
-	     WriteBufferIndex <= WriteBufferIndex + 1'b1;
-	 else
-	     WriteBufferIndex <= 1'b0;
-		  
-	 
-    if (LineCounter == 524) ReadAddr <= 1'b0;
-	 else if (!Blank) ReadAddr <= ReadAddr + 1'b1;
-end
 
 endmodule

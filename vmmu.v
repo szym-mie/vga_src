@@ -49,14 +49,14 @@ reg[AWIDTH-1:0] NextAddr;
 //end
 
 initial begin
-    Slots[0] = 8'b10000000; // noop write byte 1
-    Slots[1] = 8'b10000000; // noop write byte 2
-    Slots[2] = 8'b00000000; // read byte 1
-    Slots[3] = 8'b00000000; // read byte 2
-    Slots[4] = 8'b00000000; // read byte 3
-	 Slots[5] = 8'b00000101; // write byte 1
-    Slots[6] = 8'b00000101; // write byte 2
-    Slots[7] = 8'b00000101; // write byte 3
+	 Slots[0] = 8'b00000101; // write byte 1
+    Slots[1] = 8'b10000101; // noop write byte 2
+    Slots[2] = 8'b10000101; // noop write byte 3
+	 Slots[3] = 8'b10000000; // noop
+	 Slots[4] = 8'b10000000; // noop
+    Slots[5] = 8'b00000000; // read byte 1
+    Slots[6] = 8'b10000000; // noop read byte 2
+    Slots[7] = 8'b10000000; // noop read byte 3
 end
 
 localparam PhaseAddressSetup = 2'b00;

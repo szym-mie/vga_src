@@ -2,7 +2,6 @@
 
 module vcmd (
   input wire ByteRecvClk,
-  input wire DataModeEnable,
   input wire[7:0] ByteIn,
   input wire ReadOutClk,
   
@@ -14,28 +13,35 @@ module vcmd (
 // TODO finish vcmd data
 
 localparam Noop = 8'h00;
-localparam SetAddr = 8'h01;
+localparam SetXY = 8'h11;
+localparam Write = 8'h20;
 
 localparam ReadCmdId = 4'h0;
-localparam SetAddrPage = 4'h4;
-localparam SetAddrHigh = 4'h5;
-localparam SetAddrLow = 4'h6;
+localparam ReadX = 4'h4;
+localparam ReadY = 4'h5;
+localparam ReadPixel = 4'h8;
+
+reg[7:0] PosX = 1'b0;
+reg[7:0] PosY = 1'b0;
 
 reg[18:0] NextAddr = 1'b0;
-reg[18:0] ReadAddr = 1'b0;
 
 reg[3:0] State = 1'b0;
 
 wire BufferOverflow;
 wire BufferUnderflow;
-wire PushByte = ~BufferOverflow && DataModeEnable && ByteRecvClk;
+reg NextByte = 1'b0;
+reg PushByte = 1'b0;
 assign HasReadData = ~BufferUnderflow;
 
 wire _BufferOverflow;
 wire _BufferUnderflow;
 
+reg[18:0] AddrIn;
+
 fifo #(
-  .BUFSIZE(8),
+  .BUFSIZE(4),
+  .IWIDTH(2),
   .WWIDTH(8)
 ) DataFIFO (
   .DataIn(ByteIn),
@@ -47,10 +53,11 @@ fifo #(
 );
 
 fifo #(
-  .BUFSIZE(8),
+  .BUFSIZE(4),
+  .IWIDTH(2),
   .WWIDTH(19)
 ) AddrFIFO (
-  .DataIn(NextAddr),
+  .DataIn(AddrIn),
   .ClkIn(PushByte),
   .DataOut(AddrOut),
   .ClkOut(ReadOutClk),
@@ -58,37 +65,38 @@ fifo #(
   .IsFull(_BufferOverflow)  
 );
 
-function [3:0] SelectCmd(input[7:0] CmdId);
-  begin
-    case (CmdId)
-      Noop: SelectCmd = ReadCmdId;
-      SetAddr: SelectCmd = SetAddrPage;
-    endcase
-  end
-endfunction
+always @(negedge ByteRecvClk) begin
+    PushByte <= 1'b1;
+end
+
 
 always @(posedge ByteRecvClk) begin
-  if (DataModeEnable) begin
-    NextAddr <= NextAddr + 1'b1;
-  end else begin
+	 AddrIn <= NextAddr;
+	 
     case (State)
-      ReadCmdId: State <= SelectCmd(ByteIn);
-      SetAddrPage: begin
-        ReadAddr[18:16] <= ByteIn[2:0];
-        State <= SetAddrHigh;
+      ReadCmdId: begin
+		  case (ByteIn)
+		    Noop: State <= ReadCmdId;
+			 SetXY: State <= ReadX;
+			 Write: State <= ReadPixel;
+		  endcase
+		end
+      ReadX: begin
+        PosX <= ByteIn;
+        State <= ReadY;
       end
-      SetAddrHigh: begin
-        ReadAddr[15:8] <= ByteIn;
-        State <= SetAddrLow;
-      end
-	   SetAddrLow: begin
-        ReadAddr[7:0] <= ByteIn;
-        NextAddr <= ReadAddr;		  
+      ReadY: begin
+        PosY <= ByteIn;
+		  NextAddr <= { 2'b00, ByteIn[7:0], 1'b0, PosX[7:0] };
         State <= ReadCmdId;
-	   end
+      end
+		ReadPixel: begin
+		  PushByte <= !BufferOverflow;
+		  State <= ReadCmdId;
+		  NextAddr <= NextAddr + 1'b1;
+		end
       default: State <= ReadCmdId;
     endcase
-  end
 end
 
 endmodule

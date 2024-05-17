@@ -24,7 +24,7 @@ module vgawritetest;
 	assign MemData = Counter[8:1];
 
 	// Instantiate the Unit Under Test (UUT)
-	vga uut (
+	vga UUT (
 		.MainClkSrc(MainClkSrc), 
 		.MemAddr(MemAddr), 
 		.MemData(MemData), 
@@ -73,6 +73,8 @@ module vgawritetest;
 		MainClkSrc = 0;
 		forever #5 MainClkSrc = ~MainClkSrc;
 	end
+		
+	integer i;
 
 	initial begin
 		// Initialize Inputs
@@ -85,17 +87,28 @@ module vgawritetest;
         
 		// Add stimulus here
 		// Very fast SPI clock (100MHz)
+		send_byte(10, 8'h20);
 		send_byte(10, 8'b11000000);
+		send_byte(10, 8'h20);
 		send_byte(10, 8'b11000000);
+		send_byte(10, 8'h20);
 		send_byte(10, 8'b11000000);
 		
-		// Small delay between next pixel write
-		#160;
+		for (i = 0; i < 640; i = i + 1) begin
+			// Small delay between next pixel write
+			#160;
+			send_byte(10, 8'h11);
+			send_byte(10, 8'h00);
+			send_byte(10, 8'h10);
 		
-		// Another byte at next location
-		send_byte(10, 8'b00000011);
-		send_byte(10, 8'b00000011);
-		send_byte(10, 8'b00000011);
+			// Another byte at next location
+		   send_byte(10, 8'h20);
+			send_byte(10, i);
+			send_byte(10, 8'h20);
+			send_byte(10, i);
+			send_byte(10, 8'h20);
+			send_byte(10, i);
+		end
 	end
 	
 	always @(posedge MainClkSrc) Counter <= Counter + 1'b1;
